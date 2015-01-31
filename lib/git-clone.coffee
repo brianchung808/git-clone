@@ -31,7 +31,8 @@ module.exports = GitClone =
         repo_url = @gitCloneView.urlbar.getModel().getText()
 
         # do clone
-        @execute_clone(repo_url)
+        target_directory = atom.config.get("#{@name}.target_directory")
+        @clone_repo(repo_url, target_directory)
         @modalPanel.hide()
 
       else if e.keyCode == 27
@@ -62,12 +63,8 @@ module.exports = GitClone =
       @gitCloneView.focus()
 
 
-  execute_clone: (repo_uri) ->
+  clone_repo: (repo_uri, target_directory) ->
     # user inputted
-    target_directory = atom.config.get("#{@name}.target_directory")
-
-    # repo_uri = "https://github.com/brianchung808/brianchung808.github.io.git"
-
     # pull out the repo name from the uri
     repo_name = get_repo_name(repo_uri)
     # get the full path to save the repo to
