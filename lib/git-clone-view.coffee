@@ -8,14 +8,12 @@ class GitCloneView extends View
       @div "Enter a url to `git-clone` ex: https://github.com/atom/atom.git"
       @subview 'urlbar', new TextEditorView(mini: true)
 
-  initialize: ->
-    @urlbar.getModel().on 'keydown', -> console.log "YOLO"
-
-
   focus: ->
     @urlbar.focus()
+
+  clear: ->
+    @urlbar.setText ''
 
   # Tear down any state and detach
   # destroy: ->
   #   @element.remove()
-  
