@@ -1,9 +1,7 @@
 GitCloneView = require './git-clone-view'
 {CompositeDisposable, BufferedProcess} = require 'atom'
+
 path = require 'path'
-
-{$} = require 'space-pen'
-
 child_process = require 'child_process'
 
 module.exports = GitClone =
@@ -27,12 +25,12 @@ module.exports = GitClone =
     @gitCloneView.on 'keydown', (e) =>
       # if enter
       if e.keyCode == 13
-        console.log 'yo! enter!'
         repo_url = @gitCloneView.urlbar.getModel().getText()
 
         # do clone
         target_directory = atom.config.get("#{@name}.target_directory")
-        @clone_repo(repo_url, target_directory)
+        @clone_repo(repo_url, target_directory, (loc) -> atom.open(pathsToOpen: [loc], newWindow: true))
+        @gitCloneView.clear()
         @modalPanel.hide()
 
       else if e.keyCode == 27
@@ -63,7 +61,7 @@ module.exports = GitClone =
       @gitCloneView.focus()
 
 
-  clone_repo: (repo_uri, target_directory) ->
+  clone_repo: (repo_uri, target_directory, callback) ->
     # user inputted
     # pull out the repo name from the uri
     repo_name = get_repo_name(repo_uri)
@@ -73,7 +71,10 @@ module.exports = GitClone =
     command = 'git'
     args = ['clone', repo_uri, full_path]
     stdout = (output) -> console.log(output)
-    exit = (code) -> console.log("git clone #{repo_uri} #{full_path} exited with #{code}")
+    exit = (code) ->
+      # open new atom window on cloned repo
+      console.log("git clone #{repo_uri} #{full_path} exited with #{code}")
+      callback(full_path)
 
     git_clone = new BufferedProcess({command, args, stdout, exit})
 
