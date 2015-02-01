@@ -1,4 +1,5 @@
 GitCloneView = require './git-clone-view'
+GitCloneLoadingView = require './git-clone-loading-view'
 {CompositeDisposable, BufferedProcess} = require 'atom'
 
 path = require 'path'
@@ -6,7 +7,9 @@ child_process = require 'child_process'
 
 module.exports = GitClone =
   gitCloneView: null
+  loadingView: null
   modalPanel: null
+  loadingModalPanel: null
   subscriptions: null
 
   config:
@@ -19,17 +22,28 @@ module.exports = GitClone =
   activate: (state) ->
 
     @gitCloneView = new GitCloneView(state.gitCloneViewState)
+    @loadingView = new GitCloneLoadingView()
     @modalPanel = atom.workspace.addModalPanel(item: @gitCloneView, visible: false)
+    @loadingModalPanel = atom.workspace.addModalPanel(item: @loadingView, visible: false)
 
     # set the event listener
     @gitCloneView.on 'keydown', (e) =>
       # if enter
       if e.keyCode == 13
+        # git url to clone from
         repo_url = @gitCloneView.urlbar.getModel().getText()
+
+        @loadingModalPanel.show()
 
         # do clone
         target_directory = atom.config.get("#{@name}.target_directory")
-        @clone_repo(repo_url, target_directory, (loc) -> atom.open(pathsToOpen: [loc], newWindow: true))
+        @clone_repo(repo_url, target_directory, (err, loc) =>
+          unless err
+            atom.open(pathsToOpen: [loc], newWindow: true)
+
+          # close loading view
+          @loadingModalPanel.hide()
+        )
         @gitCloneView.clear()
         @modalPanel.hide()
 
@@ -45,15 +59,15 @@ module.exports = GitClone =
 
   deactivate: ->
     @modalPanel.destroy()
+    @loadingModalPanel.destroy()
     @subscriptions.dispose()
     @gitCloneView.destroy()
+    @loadingView.destroy()
 
   serialize: ->
     gitCloneViewState: @gitCloneView.serialize()
 
   toggle: ->
-    console.log 'GitClone was toggled!'
-
     if @modalPanel.isVisible()
       @modalPanel.hide()
     else
@@ -75,17 +89,18 @@ module.exports = GitClone =
     stderr = (output) -> clone_stderr = output
 
     exit = (code) ->
-      # open new atom window on cloned repo
-      if code == 0
-        console.log("git clone #{repo_uri} #{full_path} exited with #{code}")
-        callback(full_path)
-      else
+      # pass back code to check if error & full path
+      callback(code, full_path)
+
+      unless code == 0
         alert("Exit #{code}. stderr: #{clone_stderr}")
 
+    # clone that ish
     git_clone = new BufferedProcess({command, args, stderr, exit})
 
 # end module.exports
 
+# parse out repo name from url
 get_repo_name = (repo_uri) ->
   tmp = repo_uri.split('/')
   repo_name = tmp[tmp.length-1]
