@@ -6,7 +6,7 @@
   "activationCommands": {
     "atom-workspace": "git-clone:clone"
   },
-  "repository": "https://github.com/atom/git-clone",
+  "repository": "https://github.com/brianchung808/git-clone",
   "license": "MIT",
   "engines": {
     "atom": ">0.50.0"
