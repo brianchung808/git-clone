@@ -8,4 +8,4 @@ The default directory that git clones into is `/tmp`. This can be changed in the
 
 ### Demo
 
-![demo](screenshots/demo.gif)
+![demo](https://raw.githubusercontent.com/brianchung808/git-clone/master/screenshots/demo.gif)
