@@ -1,7 +1,7 @@
 {
   "name": "git-clone",
   "main": "./lib/git-clone",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Quickly git clone a repo and open in a new atom window",
   "activationCommands": {
     "atom-workspace": "git-clone:clone"
