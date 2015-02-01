@@ -87,8 +87,7 @@ module.exports = GitClone =
 # end module.exports
 
 get_repo_name = (repo_uri) ->
-  default_folder = do ->
-    tmp = repo_uri.split('/')
-    repo_name = tmp[tmp.length-1]
-    tmp = repo_name.split('.')
-    repo_name = tmp[...-1].join('.')
+  tmp = repo_uri.split('/')
+  repo_name = tmp[tmp.length-1]
+  tmp = repo_name.split('.')
+  repo_name = tmp[...-1].join('.')
