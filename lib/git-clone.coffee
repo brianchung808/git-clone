@@ -12,7 +12,7 @@ module.exports = GitClone =
   config:
     target_directory:
       type: 'string'
-      default: __dirname
+      default: "/tmp"
 
   name: "git-clone"
 
