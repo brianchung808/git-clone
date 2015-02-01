@@ -68,15 +68,21 @@ module.exports = GitClone =
     # get the full path to save the repo to
     full_path = path.join(target_directory, repo_name)
 
+    clone_stderr = ""
+
     command = 'git'
     args = ['clone', repo_uri, full_path]
-    stdout = (output) -> console.log(output)
+    stderr = (output) -> clone_stderr = output
+
     exit = (code) ->
       # open new atom window on cloned repo
-      console.log("git clone #{repo_uri} #{full_path} exited with #{code}")
-      callback(full_path)
+      if code == 0
+        console.log("git clone #{repo_uri} #{full_path} exited with #{code}")
+        callback(full_path)
+      else
+        alert("Exit #{code}. stderr: #{clone_stderr}")
 
-    git_clone = new BufferedProcess({command, args, stdout, exit})
+    git_clone = new BufferedProcess({command, args, stderr, exit})
 
 # end module.exports
 
