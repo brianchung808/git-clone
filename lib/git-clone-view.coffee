@@ -13,7 +13,3 @@ class GitCloneView extends View
 
   clear: ->
     @urlbar.setText ''
-
-  # Tear down any state and detach
-  # destroy: ->
-  #   @element.remove()
