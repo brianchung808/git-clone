@@ -104,5 +104,10 @@ module.exports = GitClone =
 get_repo_name = (repo_uri) ->
   tmp = repo_uri.split('/')
   repo_name = tmp[tmp.length-1]
+  # check for the case when user copied from right panel in github with .git ending
   tmp = repo_name.split('.')
-  repo_name = tmp[...-1].join('.')
+  [..., last] = tmp
+  if last is 'git'
+    repo_name = tmp[...-1].join('.')
+  else
+    repo_name
