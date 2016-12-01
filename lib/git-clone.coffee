@@ -20,7 +20,7 @@ module.exports = GitClone =
     open_in_current_window:
       description: 'Add project folder to the current window instead of opening a new window'
       type: 'boolean'
-      default: false
+      default: true
       order: 2
 
   name: "git-clone"
