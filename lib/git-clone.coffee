@@ -16,6 +16,12 @@ module.exports = GitClone =
     target_directory:
       type: 'string'
       default: "/tmp"
+      order: 1
+    open_in_current_window:
+      description: 'Add project folder to the current window instead of opening a new window'
+      type: 'boolean'
+      default: true
+      order: 2
 
   name: "git-clone"
 
@@ -39,7 +45,10 @@ module.exports = GitClone =
         target_directory = atom.config.get("#{@name}.target_directory")
         @clone_repo(repo_url, target_directory, (err, loc) =>
           unless err
-            atom.open(pathsToOpen: [loc], newWindow: true)
+            if atom.config.get("#{@name}.open_in_current_window")
+              atom.project.addPath loc
+            else
+              atom.open(pathsToOpen: [loc], newWindow: true)
 
           # close loading view
           @loadingModalPanel.hide()
